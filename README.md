@@ -33,7 +33,7 @@ PORT=3000
 5. Running Locally
 In the terminal, start the server by running:
 node server.js
-Open your browser and navigate to: http://localhost:3000/home.html
+Open your browser and navigate to: [http://localhost:3000/home.html](https://fa-webtechnology-lostfound.onrender.com/home.html)
 
 Project Structure & Navigation
 Home Page: [http://localhost:3000/home.html](https://fa-webtechnology-lostfound.onrender.com/home.html) - The landing page of the portal.
