@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Items - Campus Lost & Found</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .item-card {
+            cursor: pointer; 
+            transition: all 0.3s ease;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px -5px rgba(0,0,0,0.15);
+            border-color: #3B82F6; 
+        }
+
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.5); 
+            align-items: center; 
+            justify-content: center; 
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content { 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 16px; 
+            width: 90%; 
+            max-width: 600px; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            position: relative; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+        .close-btn { 
+            position: absolute; 
+            right: 20px; 
+            top: 20px; 
+            font-size: 28px; 
+            cursor: pointer; 
+            color: #9CA3AF; 
+            transition: 0.2s; 
+            background: #F3F4F6;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+        .close-btn:hover { background: #E5E7EB; color: #111827; }
+    </style>
+</head>
+<body>
+   <nav class="navbar">
+        <a href="home.html" class="logo">🔍QIU Campus Lost & Found</a>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="index.html" class="active">Items</a>
+            <a href="about.html">About</a>
+            <a href="login.html">Login</a>
+        </div>
+    </nav>
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <button class="btn" onclick="location.href='post.html'">+ Post New Item</button>
+    </div>
+
+    <div class="filter-bar" style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; background: white; padding: 15px; border-radius: 10px; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <input type="text" id="searchInput" placeholder="Search title or description..." style="flex: 2; min-width: 200px;">
+        <select id="filterCategory" style="flex: 1; min-width: 130px;">
+            <option value="All">All Categories</option>
+            <option value="Lost">Lost</option>
+            <option value="Found">Found</option>
+        </select>
+        <select id="filterStatus" style="flex: 1; min-width: 130px;">
+            <option value="All">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Resolved">Resolved</option>
+        </select>
+        <input type="date" id="filterDate" style="flex: 1; min-width: 130px;">
+        <button id="resetBtn" style="padding: 10px 20px; background-color: #E5E7EB; color: #374151; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s;">Reset</button>
+    </div>
+
+    <div id="items-list">Loading data...</div>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeDetailModal()">&times;</span>
+            <div id="modal-body">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        let allItems = [];
+
+        async function loadItems() {
+            try {
+                const response = await fetch('/api/items');
+                const resData = await response.json();
+                allItems = resData.data || resData || [];
+                renderItems(allItems);
+            } catch (error) {
+                console.error("加载失败:", error);
+            }
+        }
+
+        function renderItems(itemsToDisplay) {
+            const list = document.getElementById('items-list');
+            if (!itemsToDisplay || itemsToDisplay.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#6B7280; margin-top:30px;">No items found.</p>';
+                return;
+            }
+
+            list.innerHTML = ''; 
+            itemsToDisplay.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.setAttribute('onclick', `openDetailModal('${item._id}')`);
+                
+                const imageHtml = item.imageUrl 
+                    ? `<img src="${item.imageUrl}" alt="Item Image" loading="lazy" decoding="async" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-top: 15px; margin-bottom: 10px; border: 1px solid #E5E7EB;">` 
+                    : '';
+
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span class="tag ${item.category === 'Lost' ? 'lost' : 'found'}" style="margin:0;">${item.category || 'Unknown'}</span>
+                        <span style="font-weight:bold; font-size:0.9rem; color: ${item.status === 'Active' ? '#F59E0B' : '#10B981'}">${item.status || 'Active'}</span>
+                    </div>
+                    <h3 style="margin-top: 5px;">${item.title || 'Untitled'}</h3>
+                    ${imageHtml}
+                    <p style="color: #6B7280; font-size: 0.95rem; margin-top: 5px;"><strong>📍</strong> ${item.location || 'N/A'}</p>
+                    <p style="color: #6B7280; font-size: 0.95rem;"><strong>📅</strong> ${item.date || 'N/A'}</p>
+                    <hr style="border:0; border-top:1px solid #E5E7EB; margin:15px 0;">
+                    <p style="text-align: center; color: #3B82F6; font-weight: bold; font-size: 0.9rem; margin: 0;">Click to view details ✨</p>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+
+        function openDetailModal(id) {
+            const item = allItems.find(i => i._id === id);
+            if(!item) return;
+
+            const modalBody = document.getElementById('modal-body');
+            
+            const imageHtml = item.imageUrl 
+                ? `<img src="${item.imageUrl}" alt="Item" loading="lazy" decoding="async" style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">` 
+                : `<div style="width: 100%; height: 150px; background: #F3F4F6; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #9CA3AF; margin-bottom: 20px; font-weight: bold;">No Image Provided</div>`;
+
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <span class="tag ${item.category === 'Lost' ? 'lost' : 'found'}" style="margin:0; font-size: 1rem;">${item.category || 'Unknown'}</span>
+                    <span style="margin-left: 10px; font-weight: bold; color: ${item.status === 'Active' ? '#F59E0B' : '#10B981'}">● ${item.status || 'Active'}</span>
+                </div>
+                <h2 style="margin-top: 0; color: #111827; font-size: 1.8rem;">${item.title || 'Untitled'}</h2>
+                
+                ${imageHtml}
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #F9FAFB; padding: 12px; border-radius: 8px;">
+                        <p style="margin: 0; color: #6B7280; font-size: 0.85rem;">Date</p>
+                        <p style="margin: 0; font-weight: bold; color: #111827;">${item.date || 'N/A'}</p>
+                    </div>
+                    <div style="background: #F9FAFB; padding: 12px; border-radius: 8px;">
+                        <p style="margin: 0; color: #6B7280; font-size: 0.85rem;">Location</p>
+                        <p style="margin: 0; font-weight: bold; color: #111827;">${item.location || 'N/A'}</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #374151; margin-bottom: 5px;">Description</h4>
+                    <p style="background: #F3F4F6; padding: 15px; border-radius: 8px; color: #4B5563; line-height: 1.6; margin: 0; word-wrap: break-word;">
+                        ${item.description || 'No description provided.'}
+                    </p>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #E5E7EB; margin: 20px 0;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #EEF2FF; padding: 15px 20px; border-radius: 12px; border: 1px solid #C7D2FE;">
+                    <div>
+                        <p style="margin: 0; color: #4F46E5; font-size: 0.85rem; font-weight: bold;">Posted By</p>
+                        <p style="margin: 0; font-weight: bold; color: #111827; font-size: 1.1rem;">👤 ${item.submittedBy || 'Anonymous'}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0; color: #4F46E5; font-size: 0.85rem; font-weight: bold;">Contact Info</p>
+                        <p style="margin: 0; font-weight: bold; color: #111827; font-size: 1.1rem;">📞 ${item.contactInfo || 'N/A'}</p>
+                    </div>
+                </div>
+            `;
+
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('show');
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.remove('show');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target === modal) {
+                closeDetailModal();
+            }
+        }
+
+        // Filtering and login status logic
+        function applyFilters() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const categoryValue = document.getElementById('filterCategory').value;
+            const statusValue = document.getElementById('filterStatus').value;
+            const dateValue = document.getElementById('filterDate').value;
+
+            const filteredItems = allItems.filter(item => {
+                const title = (item.title || '').toLowerCase();
+                const desc = (item.description || '').toLowerCase();
+                const matchSearch = title.includes(searchText) || desc.includes(searchText);
+                const matchCategory = categoryValue === 'All' || item.category === categoryValue;
+                const matchStatus = statusValue === 'All' || item.status === statusValue;
+                const matchDate = dateValue === '' || item.date === dateValue;
+                return matchSearch && matchCategory && matchStatus && matchDate;
+            });
+            renderItems(filteredItems);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('filterCategory').addEventListener('change', applyFilters);
+        document.getElementById('filterStatus').addEventListener('change', applyFilters);
+        document.getElementById('filterDate').addEventListener('change', applyFilters);
+        
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterCategory').value = 'All';
+            document.getElementById('filterStatus').value = 'All';
+            document.getElementById('filterDate').value = '';
+            applyFilters();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const userData = localStorage.getItem('adminUser');
+            const authLink = document.querySelector('.nav-links a[href="login.html"], .nav-links a[href="userdashboard.html"]');
+            
+            if (authLink) {
+                if (userData) {
+                    authLink.href = 'userdashboard.html';
+                    authLink.innerText = 'Dashboard';
+                    if (window.location.pathname.includes('login.html')) {
+                        window.location.href = 'userdashboard.html';
+                    }
+                } else {
+                    authLink.href = 'login.html';
+                    authLink.innerText = 'Login';
+                }
+            }
+        });
+
+        window.onload = loadItems;
+    </script>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Lost & Found System</h4>
+                <p>&copy; 2026 Lost & Found System</p>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <p><i class="fa-solid fa-location-dot"></i> Jalan Harmoni, Ipoh, Perak Malaysia</p>
+                <p><i class="fa-solid fa-phone"></i> +60 12-345 6789</p>
+                <p><i class="fa-solid fa-envelope"></i> qiulostfound@qiu.edu.my</p>
+            </div>
+            <div class="footer-col">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                    <a href="#"><i class="fa-brands fa-facebook"></i> Facebook</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

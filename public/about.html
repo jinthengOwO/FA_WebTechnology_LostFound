@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About - Campus Lost & Found</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="home.html" class="logo">🔍QIU Campus Lost & Found</a>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="index.html">Items</a>
+            <a href="about.html">About</a>
+            <a href="login.html">Login</a>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>About Our Platform</h1>
+        <p>A digital solution for a connected campus community.</p>
+    </div>
+
+    <div class="item-card about-card">
+        <h2>Our Mission</h2>
+        <p>The <strong>Campus Lost & Found System</strong> is dedicated to providing a streamlined, secure, and user-friendly digital platform. We aim to help students effortlessly recover misplaced belongings and empower helpful individuals to return found items efficiently.</p>
+        
+        <hr class="divider">
+
+        <h2>Key Features</h2>
+        <ul class="feature-list">
+            <li><strong>Seamless Browsing:</strong> Advanced search and filtering tools to locate items quickly.</li>
+            <li><strong>Easy Reporting:</strong> A straightforward form to post missing or found items in seconds.</li>
+            <li><strong>Status Management:</strong> Real-time tracking with "Active" and "Resolved" status updates.</li>
+        </ul>
+
+        <hr class="divider">
+        
+        <div class="developer-info">
+            <p><strong>Developed & Designed By:</strong> JinTheng</p>
+            <p><strong>Version:</strong> 1.0.0</p>
+        </div>
+    </div>
+
+  <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Lost & Found System</h4>
+                <p>&copy; 2026 Lost & Found System</p>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <p><i class="fa-solid fa-location-dot"></i> Jalan Harmoni, Ipoh, Perak Malaysia</p>
+                <p><i class="fa-solid fa-phone"></i> +60 12-345 6789</p>
+                <p><i class="fa-solid fa-envelope"></i> qiulostfound@gmail.com</p>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                    <a href="#"><i class="fa-brands fa-facebook"></i> Facebook</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Check if the user has a "pass" 
+        const userData = localStorage.getItem('adminUser');
+        const authLink = document.querySelector('.nav-links a[href="login.html"], .nav-links a[href="userdashboard.html"]');
+        
+        if (authLink) {
+            if (userData) {
+                authLink.href = 'userdashboard.html';
+                authLink.innerText = 'Dashboard';
+                if (window.location.pathname.includes('login.html')) {
+                    window.location.href = 'userdashboard.html';
+                }
+            } else {
+                authLink.href = 'login.html';
+                authLink.innerText = 'Login';
+            }
+        }
+    });
+</script>
+</body>
+</html>
