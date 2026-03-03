@@ -7,7 +7,7 @@ const path = require('path');
 const compression = require('compression'); 
 
 dotenv.config();
-
+ 
 const app = express();
 
 app.use(compression()); //Enable Gzip compression to significantly reduce transmission size
