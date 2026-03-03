@@ -1,0 +1,162 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.navbar {
+    background-color: #FFFFFF;
+    padding: 18px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); 
+    
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.navbar .logo {
+    color: #4F46E5; 
+    font-size: 22px;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.nav-links li {
+    display: inline-block;
+}
+
+.nav-links a {
+    color: #6B7280; 
+    text-decoration: none;
+    margin-left: 25px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active { 
+    color: #4F46E5; 
+}
+
+.login-container { 
+    margin-top: 80px;    
+    margin-bottom: 50px; 
+    margin-left: auto;   
+    margin-right: auto;  
+    display: flex; 
+    width: 900px; 
+    height: 600px; 
+    background: white; 
+    border-radius: 20px; 
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); 
+    overflow: hidden; 
+}
+
+.login-image { 
+    flex: 1; 
+    background: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop') center/cover; 
+    position: relative; 
+}
+
+.login-image-overlay { 
+    position: absolute; 
+    inset: 0; 
+    background: linear-gradient(to bottom, rgba(0,97,254,0.2), rgba(0,97,254,0.85)); 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-end; 
+    padding: 40px; 
+    color: white; 
+}
+.overlay-title { font-size: 2rem; margin: 0 0 10px 0; font-weight: bold; }
+.overlay-text { font-size: 1.1rem; margin: 0; opacity: 0.9; line-height: 1.5; }
+
+.login-form-wrapper { 
+    flex: 1; 
+    padding: 50px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+}
+.login-logo { 
+    font-size: 1.2rem; 
+    font-weight: bold; 
+    color: #0061FE; 
+    text-decoration: none; 
+    margin-bottom: 30px; 
+    display: inline-block; 
+}
+.form-title { font-size: 2.2rem; margin: 0 0 10px 0; color: #1E1919; letter-spacing: -0.5px; }
+.form-subtitle { color: #5F5E5B; margin: 0 0 30px 0; }
+
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 0.9rem; }
+.input-group input { 
+    width: 100%; 
+    padding: 12px 15px; 
+    border: 1px solid #D1D5DB; 
+    border-radius: 8px; 
+    font-size: 1rem; 
+    box-sizing: border-box; 
+    transition: 0.2s; 
+}
+.input-group input:focus { border-color: #0061FE; outline: none; box-shadow: 0 0 0 3px rgba(0,97,254,0.15); }
+
+.btn-submit { 
+    width: 100%; 
+    padding: 14px; 
+    background-color: #0061FE; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    font-size: 1.1rem; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    margin-top: 10px; 
+}
+.btn-submit:hover { background-color: #0050d1; transform: translateY(-1px); }
+
+.toggle-text { margin-top: 25px; text-align: center; color: #5F5E5B; font-size: 0.95rem; }
+.toggle-text span { color: #0061FE; cursor: pointer; font-weight: bold; transition: 0.2s; }
+.toggle-text span:hover { text-decoration: underline; }
+
+#name-group { display: none; } 
+
+.error-msg { color: #EF4444; font-size: 0.9rem; margin-bottom: 15px; display: none; font-weight: 600; background: #FEE2E2; padding: 10px; border-radius: 6px;}
+.success-msg { color: #10B981; font-size: 0.9rem; margin-bottom: 15px; display: none; font-weight: 600; background: #D1FAE5; padding: 10px; border-radius: 6px;}
+
+
+.password-wrapper { position: relative; display: block; }
+.toggle-eye { 
+    position: absolute; 
+    right: 15px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    cursor: pointer; 
+    user-select: none; 
+    font-size: 1.1rem; 
+    color: #6B7280;
+}
+.toggle-eye:hover { color: #0061FE; }
+#confirm-group { display: none; } 

@@ -1,0 +1,295 @@
+:root {
+    --primary-color: #3B82F6;    
+    --primary-hover: #2563EB;
+    --success-color: #10B981;    
+    --warning-color: #F59E0B;   
+    --danger-color: #EF4444;     
+    --bg-color: #F9FAFB;         
+    --card-bg: #FFFFFF;         
+    --text-main: #111827;        
+    --text-muted: #6B7280;       
+    --border-color: #E5E7EB;     
+    --navbar-bg: #ffffff;       
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.navbar {
+    background-color: #FFFFFF; 
+    padding: 18px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); 
+    
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.navbar .logo {
+    color: #4F46E5; 
+    font-size: 22px;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.nav-links li {
+    display: inline-block;
+}
+
+.nav-links a {
+    color: #6B7280; 
+    text-decoration: none;
+    margin-left: 25px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active { 
+    color: #4F46E5; 
+}
+x
+
+h1, h2, h3 {
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 2.2rem;
+    font-weight: 800;
+}
+
+.item-card {
+    background-color: var(--card-bg);
+    border: 1px solid #E5E7EB;
+    border-radius: 16px; 
+    padding: 35px 40px;  
+    margin: 20px auto;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 25px; 
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151; 
+    margin-bottom: 10px; 
+    font-size: 0.95rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="date"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 14px 10px; 
+    border: 1px solid #D1D5DB; 
+    border-radius: 10px; 
+    font-size: 1rem;
+    color: var(--text-main);
+    background-color: #F9FAFB; 
+    transition: all 0.3s ease;
+}
+
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: #ffffff; 
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); 
+}
+
+
+.form-group input:disabled {
+    background-color: #E5E7EB; 
+    color: #6B7280;           
+    cursor: not-allowed;      
+    border-color: #D1D5DB;
+    font-weight: 600;
+}
+
+.form-group input:disabled:focus {
+    box-shadow: none;          
+    border-color: #D1D5DB;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.dashboard-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    flex: 1;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid var(--primary-color);
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.stat-card p {
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.cards-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.hub-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 30px 20px;
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.hub-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.hub-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: var(--success-color);
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 30px;
+    transform: translateX(-50%);
+    font-weight: bold;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-left: 10px;
+}
+.tag.lost { background-color: #FEE2E2; color: var(--danger-color); }
+.tag.found { background-color: #D1FAE5; color: var(--success-color); }
+
+@media (max-width: 768px) {
+    .dashboard-stats, .cards-container {
+        flex-direction: column;
+    }
+    .navbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .nav-links a {
+        margin: 0 5px;
+    }
+}

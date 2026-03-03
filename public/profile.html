@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile - Campus Lost & Found</title>
+    <link rel="stylesheet" href="profilestyle.css">
+</head>
+<body>
+    <div id="toast" class="toast">Profile Updated Successfully!</div>
+    
+    <nav class="navbar">
+        <a href="home.html" class="logo">🔍QIU Campus Lost & Found</a>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="index.html">Items</a>
+            <a href="about.html">About</a>
+            <a href="userdashboard.html" class="active">Dashboard</a>
+        </div>
+    </nav>
+
+    <div style="max-width: 800px; margin: 20px auto 0; padding: 0 20px;">
+        <a href="userdashboard.html" style="display: inline-flex; align-items: center; padding: 8px 16px; background-color: #E5E7EB; color: #374151; text-decoration: none; border-radius: 6px; font-weight: bold; transition: 0.2s; font-size: 0.95rem;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <h1>My Profile</h1>
+    
+    <div class="item-card" style="max-width: 550px; margin: 0 auto;">
+        <form id="profileForm">
+            <div class="form-group">
+                <label>Email Address (Cannot be changed)</label>
+                <input type="email" id="profileEmail" disabled style="background-color: #F3F4F6; color: #6B7280; cursor: not-allowed; font-weight: bold;">
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="profileName" required>
+            </div>
+            
+            <div class="form-group">
+                <label>New Password (Leave blank to keep current)</label>
+                <input type="password" id="profilePassword" placeholder="Minimum 8 characters">
+                <small id="passwordError" style="color: #EF4444; display: none; margin-top: 5px;">Password must be at least 8 characters long.</small>
+            </div>
+            
+            <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">💾 Save Changes</button>
+        </form>
+    </div>
+
+    <script>
+        const userDataStr = localStorage.getItem('adminUser');
+        if (!userDataStr) {
+            alert("Please login to view your profile.");
+            window.location.href = 'login.html';
+        }
+        
+        let currentUser = JSON.parse(userDataStr);
+
+        //Automatically fill in the current user's data into the input box
+        document.getElementById('profileEmail').value = currentUser.email;
+        document.getElementById('profileName').value = currentUser.name;
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const passwordError = document.getElementById('passwordError');
+            passwordError.style.display = 'none';
+
+            const newName = document.getElementById('profileName').value.trim();
+            const newPassword = document.getElementById('profilePassword').value;
+
+            if (newPassword && newPassword.length < 8) {
+                passwordError.style.display = 'block';
+                return; 
+            }
+
+            const updateData = { name: newName };
+            if (newPassword) {
+                updateData.password = newPassword;
+            }
+
+            try {
+                const response = await fetch(`/api/auth/user/${currentUser.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('adminUser', JSON.stringify(data.user));
+                    currentUser = data.user; 
+
+                    document.getElementById('profilePassword').value = '';
+                    
+                    alert("Profile updated successfully!");
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch (error) {
+                alert("Server error. Please try again.");
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const authLink = document.querySelector('.nav-links a[href="login.html"], .nav-links a[href="userdashboard.html"]');
+            if (authLink && localStorage.getItem('adminUser')) {
+                authLink.href = 'userdashboard.html';
+                authLink.innerText = 'Dashboard';
+            }
+        });
+    </script>
+</body>
+</html>

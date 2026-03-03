@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>My Posts - Campus Lost & Found</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .report-card { display: flex; justify-content: space-between; align-items: center; }
+        .action-btns button { padding: 6px 12px; margin-left: 5px; cursor: pointer; border: none; border-radius: 4px; color: white; font-weight: bold; transition: 0.2s;}
+        .action-btns button:hover { transform: translateY(-2px); }
+        .btn-edit { background-color: #3B82F6; } 
+        .btn-toggle { background-color: #F59E0B; } 
+        .btn-delete { background-color: #EF4444; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background-color: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #9CA3AF; transition: 0.2s; }
+        .close-btn:hover { color: #111827; }
+        .modal-form-group { margin-bottom: 15px; text-align: left; }
+        .modal-form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #374151; }
+        .modal-form-group input, .modal-form-group textarea, .modal-form-group select { width: 100%; padding: 10px; border: 1px solid #D1D5DB; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
+        .btn-save { width: 100%; padding: 12px; background-color: #10B981; color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-save:hover { background-color: #059669; }
+    </style>
+</head>
+<body>
+   <nav class="navbar">
+        <a href="home.html" class="logo">🔍QIU Campus Lost & Found</a>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="index.html">Items</a>
+            <a href="about.html">About</a>
+            <a href="userdashboard.html" class="active">Dashboard</a>
+        </div>
+    </nav>
+
+    <div style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
+        <a href="userdashboard.html" style="display: inline-flex; align-items: center; padding: 8px 16px; background-color: #E5E7EB; color: #374151; text-decoration: none; border-radius: 6px; font-weight: bold; transition: 0.2s; font-size: 0.95rem;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div class="page-header">
+         <h1>Manage My Posts</h1>
+         <p>View, edit, or resolve the items you have posted.</p>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3 id="stat-total">0</h3>
+            <p>My Total Posts</p>
+        </div>
+        <div class="stat-card" style="border-top: 4px solid var(--warning);">
+            <h3 id="stat-active" style="color: var(--warning);">0</h3>
+            <p>My Active</p>
+        </div>
+        <div class="stat-card" style="border-top: 4px solid var(--success);">
+            <h3 id="stat-resolved" style="color: var(--success);">0</h3>
+            <p>My Resolved</p>
+        </div>
+    </div>
+
+    <div id="report-list"></div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditModal()">&times;</span>
+            <h2 style="margin-top: 0; color: #111827; text-align: center;">Edit My Item</h2>
+            
+            <form id="editForm">
+                <input type="hidden" id="edit-id">
+                
+                <div class="modal-form-group">
+                    <label>Title</label>
+                    <input type="text" id="edit-title" required maxlength="30">
+                </div>
+                
+                <div class="modal-form-group">
+                    <label>Category</label>
+                    <select id="edit-category" required>
+                        <option value="Lost">Lost</option>
+                        <option value="Found">Found</option>
+                    </select>
+                </div>
+
+                <div class="modal-form-group">
+                    <label>Location</label>
+                    <input type="text" id="edit-location" required maxlength="30">
+                </div>
+                
+                <div class="modal-form-group">
+                    <label>Date</label>
+                    <input type="date" id="edit-date" required>
+                </div>
+                
+                <div class="modal-form-group">
+                    <label>Contact Info</label>
+                    <input type="text" id="edit-contact" required maxlength="30">
+                </div>
+                
+                <div class="modal-form-group">
+                    <label>Description</label>
+                    <textarea id="edit-description" rows="3" required maxlength="100"></textarea>
+                    <div id="edit-charCount" style="text-align: right; font-size: 0.85rem; color: #6B7280; margin-top: 5px; font-weight: 600;">0/100</div>
+                </div>
+                
+                <button type="submit" class="btn-save">💾 Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const userDataStr = localStorage.getItem('adminUser');
+        if (!userDataStr) {
+            alert("Access Denied! Please login first.");
+            window.location.href = 'login.html';
+        }
+        const currentUser = JSON.parse(userDataStr);
+        
+        let allReportsData = []; 
+
+        const editDescInput = document.getElementById('edit-description');
+        const editCharCountDisplay = document.getElementById('edit-charCount');
+
+        function updateEditCharCount() {
+            const currentLength = editDescInput.value.length;
+            editCharCountDisplay.textContent = `${currentLength}/100`;
+            
+            if (currentLength === 100) {
+                editCharCountDisplay.style.color = '#EF4444'; 
+            } else {
+                editCharCountDisplay.style.color = '#6B7280'; 
+            }
+        }
+
+        editDescInput.addEventListener('input', updateEditCharCount);
+
+        // Load and "filter" data
+        async function loadReports() {
+            try {
+                const response = await fetch('/api/items');
+                const resData = await response.json();
+                
+                allReportsData = resData.data.filter(item => item.submittedBy === currentUser.name); 
+                
+                const list = document.getElementById('report-list');
+                list.innerHTML = '';
+                
+                const total = allReportsData.length;
+                const activeCount = allReportsData.filter(item => item.status === 'Active').length;
+                const resolvedCount = allReportsData.filter(item => item.status === 'Resolved').length;
+
+                document.getElementById('stat-total').innerText = total;
+                document.getElementById('stat-active').innerText = activeCount;
+                document.getElementById('stat-resolved').innerText = resolvedCount;
+
+                if (total === 0) {
+                    list.innerHTML = `<p style="text-align:center; color:#6B7280; margin-top: 40px;">You haven't posted any items yet.</p>`;
+                    return;
+                }
+
+                allReportsData.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card report-card';
+                    
+                    const thumbnailHtml = item.imageUrl 
+                        ? `<img src="${item.imageUrl}" alt="img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #E5E7EB;">` 
+                        : `<div style="width: 60px; height: 60px; background: #F3F4F6; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #9CA3AF; font-size: 0.7rem; border: 1px solid #E5E7EB;">No Pic</div>`;
+
+                    card.innerHTML = `
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            ${thumbnailHtml}
+                            <div>
+                                <strong>${item.title || 'Untitled'}</strong> 
+                                <span class="tag ${item.category === 'Lost' ? 'lost' : 'found'}">${item.category || 'N/A'}</span>
+                                <span>| Status: <b style="color: ${item.status === 'Active' ? '#F59E0B' : '#10B981'}">${item.status || 'Active'}</b></span>
+                                <br><small>Posted on ${item.date || 'N/A'}</small>
+                            </div>
+                        </div>
+                        <div class="action-btns">
+                            <button class="btn-edit" onclick="openEditModal('${item._id}')">Edit</button>
+                            <button class="btn-toggle" onclick="toggleStatus('${item._id}', '${item.status}')">
+                                ${item.status === 'Active' ? 'Mark Resolved' : 'Mark Active'}
+                            </button>
+                            <button class="btn-delete" onclick="deleteItem('${item._id}')">Delete</button>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+
+        function openEditModal(id) {
+            const item = allReportsData.find(i => i._id === id);
+            
+            document.getElementById('edit-id').value = item._id;
+            document.getElementById('edit-title').value = item.title || '';
+            document.getElementById('edit-category').value = item.category || 'Lost';
+            document.getElementById('edit-location').value = item.location || '';
+            document.getElementById('edit-date').value = item.date || '';
+            document.getElementById('edit-contact').value = item.contactInfo || '';
+            document.getElementById('edit-description').value = item.description || '';
+            
+            updateEditCharCount();
+            
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            
+            const id = document.getElementById('edit-id').value;
+            const updatedData = {
+                title: document.getElementById('edit-title').value,
+                category: document.getElementById('edit-category').value, 
+                location: document.getElementById('edit-location').value,
+                date: document.getElementById('edit-date').value,
+                contactInfo: document.getElementById('edit-contact').value,
+                description: document.getElementById('edit-description').value
+            };
+
+            await fetch(`/api/items/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            closeEditModal(); 
+            loadReports(); 
+        });
+
+        async function toggleStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'Active' ? 'Resolved' : 'Active';
+            await fetch(`/api/items/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            loadReports(); 
+        }
+
+        async function deleteItem(id) {
+            if (confirm('Are you sure you want to delete your item? This cannot be undone.')) {
+                await fetch(`/api/items/${id}`, { method: 'DELETE' });
+                loadReports(); 
+            }
+        }
+
+        window.onload = loadReports;
+    </script>
+</body>
+</html>
