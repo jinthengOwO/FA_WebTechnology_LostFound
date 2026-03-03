@@ -2,7 +2,7 @@ FA - Campus Lost & Found System
 Project Title: Campus Lost & Found Web Portal
 Name: Hooi Jin Theng (QIU-202510-008707)
 Tools and Technologies Used
-Frontend: HTML5, CSS3, JavaScript (Vanilla JS)
+Frontend: HTML5, CSS3, JavaScript
 
 Backend: Node.js, Express.js
 
